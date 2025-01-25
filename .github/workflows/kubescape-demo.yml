@@ -1,0 +1,24 @@
+name: Run Kubescape
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  kubescape-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Install Kubescape
+      run: curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+
+    - name: Run Kubescape on YAML files
+      run: kubescape scan framework nsa *.yml --format html --output kubescape-report.html
+
