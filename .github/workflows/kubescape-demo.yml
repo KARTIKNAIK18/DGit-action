@@ -1,22 +1,36 @@
-name: Run Kubescape
+name: Run Kubescape with NPM Setup
 
 on:
   push:
-    branches:[main]
+    branches:
+      - main
   pull_request:
-    branches:[main]
+    branches:
+      - main
 
 jobs:
-  nsa-security-cheack:
+  kubescape-scan:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Install Kubescape
-      run: curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16 # Adjust this based on your project’s requirements
 
-    - name: Run Kubescape on YAML files
-      run: kubescape scan framework nsa *.yaml
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Project (if needed)
+      run: npm run build # Skip this step if you don’t have a build script
+
+    - name: Install Kubescape
+      run: curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | bash
+
+    - name: Run Kubescape on YAML Files
+      run: kubescape scan framework nsa *.yml --format html --output kubescape-report.html
+
 
